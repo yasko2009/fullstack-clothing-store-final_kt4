@@ -4,6 +4,7 @@ import {
   type Product,
   useProductStore,
 } from "../store/productStore";
+import { useCartStore } from "../store/cartStore";
 
 export default function Catalog() {
   const {
@@ -13,6 +14,12 @@ export default function Catalog() {
     fetchProducts,
     deleteProduct,
   } = useProductStore();
+
+const addToCart = useCartStore((state) => state.addToCart);
+
+  const handleAddToCart = (product: Product) => {
+  addToCart(product);
+};
 
   const [isAdding, setIsAdding] = useState(false);
   const [editingProduct, setEditingProduct] =
@@ -124,7 +131,15 @@ export default function Catalog() {
                 {product.description}
               </p>
 
-              <div className="mt-5 grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => handleAddToCart(product)}
+                className="mt-5 w-full rounded-lg bg-black px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
+                 >
+                  Add to cart
+              </button>
+
+              <div className="mt-3 grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => {

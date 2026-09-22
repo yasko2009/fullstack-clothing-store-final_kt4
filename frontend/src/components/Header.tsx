@@ -1,15 +1,28 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
+import { useCartStore } from "../store/cartStore";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const items = useCartStore((state) => state.items);
+
+  const cartCount = items.reduce(
+    (sum, item) => sum + item.quantity,
+    0,
+  );
 
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
 
+  const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+    `text-sm font-medium transition ${
+      isActive ? "text-black" : "text-gray-500 hover:text-black"
+    }`;
+
   return (
-    <header className="border-b border-gray-200 bg-white">
+    <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <Link
           to="/"
@@ -20,62 +33,66 @@ export default function Header() {
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
-          <Link
-            to="/"
-            className="text-sm font-medium text-gray-700 transition hover:text-black"
-          >
+          <NavLink to="/" className={navLinkClass}>
             Home
-          </Link>
+          </NavLink>
 
-          <Link
-            to="/catalog"
-            className="text-sm font-medium text-gray-700 transition hover:text-black"
-          >
+          <NavLink to="/catalog" className={navLinkClass}>
             Catalog
-          </Link>
+          </NavLink>
 
-          <Link
-            to="/profile"
-            className="text-sm font-medium text-gray-700 transition hover:text-black"
-          >
+          <NavLink to="/profile" className={navLinkClass}>
             Profile
-          </Link>
+          </NavLink>
 
-          <Link
-            to="/cart"
-            className="text-sm font-medium text-gray-700 transition hover:text-black"
-          >
-            Cart
-          </Link>
+          <NavLink to="/cart" className={navLinkClass}>
+            Cart ({cartCount})
+          </NavLink>
         </nav>
 
         <button
           type="button"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm md:hidden"
+          className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-800 md:hidden"
         >
-          Menu
+          {isMenuOpen ? "Close" : "Menu"}
         </button>
       </div>
 
       {isMenuOpen && (
-        <nav className="border-t border-gray-200 px-6 py-4 md:hidden">
+        <nav className="border-t border-gray-200 bg-white px-6 py-4 md:hidden">
           <div className="flex flex-col gap-4">
-            <Link to="/" onClick={closeMenu} className="text-sm font-medium text-gray-700">
+            <NavLink
+              to="/"
+              onClick={closeMenu}
+              className={navLinkClass}
+            >
               Home
-            </Link>
+            </NavLink>
 
-            <Link to="/catalog" onClick={closeMenu} className="text-sm font-medium text-gray-700">
+            <NavLink
+              to="/catalog"
+              onClick={closeMenu}
+              className={navLinkClass}
+            >
               Catalog
-            </Link>
+            </NavLink>
 
-            <Link to="/profile" onClick={closeMenu} className="text-sm font-medium text-gray-700">
+            <NavLink
+              to="/profile"
+              onClick={closeMenu}
+              className={navLinkClass}
+            >
               Profile
-            </Link>
+            </NavLink>
 
-            <Link to="/cart" onClick={closeMenu} className="text-sm font-medium text-gray-700">
-              Cart
-            </Link>
+            <NavLink
+              to="/cart"
+              onClick={closeMenu}
+              className={navLinkClass}
+            >
+              Cart ({cartCount})
+            </NavLink>
           </div>
         </nav>
       )}
